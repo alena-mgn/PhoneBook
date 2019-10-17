@@ -1,0 +1,141 @@
+input.ng-touched.ng-invalid {
+  border:solid red 2px;
+}
+input.ng-touched.ng-valid {
+  border:solid green 2px;
+}
+
+div {
+  display: flex;
+  justify-content: center;
+
+  span {
+    font-size: 1.2rem;
+    margin-right: 20px;
+  }
+
+}
+
+p {
+  text-align: center;
+  font-size: 1.2rem;
+  color: red;
+}
+
+h1 {
+  margin: auto;
+  color: blue;
+}
+
+section {
+  width: 80%;
+  padding: .5rem;
+  margin: .8rem auto;
+
+    header {
+      margin-bottom: 1rem;
+      font-size: 1.2rem;
+          h4 {
+            margin: .1rem;
+            font-size: 1.6rem;
+            text-align: center;
+            color: #696969;
+          }
+          span{
+            font-size: 1.5rem;
+            color: navy;
+            margin: auto 2rem;
+          }
+    }
+
+    button {
+      margin: 0 1rem;
+      cursor: pointer;
+    }
+
+    input {
+      margin: 0 2rem;
+      width: 50%;
+      font-size: .8rem;
+      border: 2px solid #ccc;
+      border-radius: 1px;
+    }
+
+    .filter {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      margin-bottom: 1rem;
+      height: 30px;
+
+      h4 {
+        font-size: 1.2rem;
+        text-align: justify;
+
+        span {
+          font-size: 1.2rem;
+          text-align: justify;
+        }
+      }
+
+    }
+
+    .filter input {
+      width: 60%;
+      height: 100%;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      outline: none;
+      padding: 0 .5rem
+    }
+
+}
+
+h3 {
+  text-align: center;
+  margin: .5rem;
+
+  strong {
+    text-align: center;
+    font-size: 1.5rem;
+    color: blue;
+    margin: auto .5rem;
+  }
+}
+
+select {
+  margin: 0 2rem;
+  width: 40%;
+  font-size: 1rem;
+  border: 2px solid #ccc;
+  border-radius: 1px;
+
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  margin-top: 1rem;
+
+  li {
+    position: relative;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: .5rem 1rem;
+    margin-bottom: .5rem;
+    display: flex;
+    justify-content: space-between;
+    text-align: left;
+  }
+  span {
+    font-size: 1.2rem;
+    color: blue;
+    margin: auto 2rem;
+  }
+  .buttons{
+    align-items: flex-end;
+    margin: auto 1rem;
+    cursor: pointer;
+  }
+}

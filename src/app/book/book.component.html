@@ -1,0 +1,155 @@
+<div class="header">
+  <h1> <strong>Call Center</strong></h1>
+</div>
+<hr><hr>
+
+<section>
+  <div class="form-group">
+    <div *ngIf="!isShow"  class="form-group" >
+      <button type="button"
+            (click)="show()">Найти сотрудника</button>
+    </div>
+
+    <div class="filter" *ngIf=isShow >
+      <input type="text" name="namePerson"
+            class="form-control"
+            [(ngModel)]="searchName"
+            placeholder="Введите данные..." />
+      <div class="form-group">
+        <button type="button"
+        [disabled] ="!searchName"
+                (click)="search()">Найти</button>
+      </div>
+      <div *ngIf="isShow" class="form-group">
+        <button type="button" (click)="show()">Закрыть</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+<section>
+      <div class="filter" *ngIf="isOut && isShow" >
+        <header>
+          <h4>Данные сотрудника:
+            <span>{{searchName}}</span></h4>
+          <h4>Комната: <span>{{person.room}}</span></h4>
+          <h4>Рабочий телефон:<span>{{person.phone}}</span></h4>
+        </header>
+      </div>
+      <div *ngIf="!isOut && isShow">
+        <p>Такого сотрудника нет</p>
+      </div>
+</section>
+<hr><hr>
+
+<section>
+  <div class="form-group">
+    <span>Выберите помещение:</span>
+    <select class="form-control" name="box" [(ngModel)]="searchRoom">
+      <option *ngFor="let room of rooms; let i = index" [value]="room">
+        {{room}}
+      </option>
+    </select>
+  </div>
+</section>
+ <hr><hr>
+
+<section>
+  <header>
+    <h4>Список телефонов</h4>
+      <strong>Комната:<span>{{searchRoom}}</span></strong>
+    <hr />
+  </header>
+
+  <div class="filter">
+    <input type="text" placeholder="Поиск телефона..."
+            [(ngModel)]="searchPhone"/>
+  </div>
+
+    <ul class="form-group" *ngIf="dataService.phones.length; else noPhone" >
+      <li class="form-control" name="showPhone "
+              *ngFor="let tel of dataService.phones | phonesFilter: searchRoom | telephoneFilter: searchPhone; let i=index">
+        <div *ngIf="dataService.phones.length; else noPhone">
+          <strong>{{i+1}}</strong>
+          <span *ngIf="searchRoom =='Все телефоны'" ><strong>{{tel.room}}</strong></span>
+          <span><strong>{{tel.phone}}</strong></span>
+        </div>
+        <div class="buttons">
+          <div class="form-control">
+            <button type="button" name="showButton"
+              (click)="showOperators(tel)">
+              Показать операторов</button>
+          </div>
+          <button type="button" name="remPhone"
+              (click)="removePhone(tel.phone)">
+              Удалить номер</button>
+          </div>
+      </li>
+    </ul>
+    <hr/>
+
+      <div *ngIf="searchRoom !=='Все телефоны'" class="form-group " >
+        <span>Телефон:</span>
+        <input class="form-control"
+          type="text"
+          [(ngModel)]="addTel"
+          (keydown.enter)="addPhone()"
+          name = "tlfn" #tlfn="ngModel" required pattern="[+7]+[0-9]{11}" />
+        <button type="button"
+              (click)= "addPhone()"
+              [disabled] ="tlfn.invalid">
+                Добавить</button>
+      </div>
+  </section>
+
+<ng-template #noPhone>
+  <p>Телефонов нет</p>
+</ng-template>
+<hr><hr>
+
+<section *ngIf=searchRoom >
+  <header>
+    <h4>Список операторов</h4>
+    <strong *ngIf="searchRoom !=='Все телефоны'" >Комната:<span>{{roomShow}}</span></strong>
+    <strong>Телефон: <span>{{phoneShow}}</span></strong>
+    <hr />
+  </header>
+
+<div class="filter">
+  <input type="text" placeholder="Поиск оператора..."
+          [(ngModel)]="searchOperator"/>
+</div>
+
+    <ul class="form-goup" *ngIf="operatorsPhone.length; else noOperators">
+      <li class="form-control" name="showOper"
+            *ngFor="let oper of operatorsPhone | operatorsFilter: searchOperator; let i = index" >
+        <div>
+          <strong>{{i+1}}</strong>
+          <span> <strong>{{oper}}</strong> </span>
+        </div>
+        <div class="buttons">
+          <button class="btn btn-danger"
+                (click)="editOperator(i)">Редактировать</button>
+          <button  name="remOperator"
+            (click)="removeOperator(oper)">Удалить</button>
+        </div>
+      </li>
+    </ul>
+
+    <ng-template #noOperators>
+    <p>Операторов нет</p>
+    </ng-template>
+
+      <div *ngIf="searchRoom !=='Все телефоны'" class="form-group">
+        <span>Оператор:</span>
+        <input class="form-control"
+          type="text"
+          placeholder="Введите данные..."
+          [(ngModel)]="addOper"
+          (keydown.enter)="addOperator()" />
+        <button type="button"
+            (click)= "addOperator()"
+            [disabled] ="!addOper">
+              Добавить</button>
+      </div>
+</section>
