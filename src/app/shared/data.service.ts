@@ -72,13 +72,14 @@ export class DataService {
       this.phones[idx].operators.push(addOper);
     }
 
-    editOperator(phoneShow: string, id: number) {
+    editOperator(phoneShow: string, id: number, newName: string) {
       let idx: number;
       for (let i = 0; i < this.phones.length; i++) {
           if (this.phones[i].phone == phoneShow) {
                 idx = i; };
       };
-      let newName: string = prompt("Введите новые данные");
+      //let newName: string = 'OPERATOR'
+      //prompt("Введите новые данные");
       this.phones[idx].operators.splice(id,1, newName);
     }
 

@@ -28,6 +28,8 @@ export class BookComponent implements OnInit {
   private person: Phone = new Phone('', '', []);
   private searchOperator: string = '';
   private searchPhone: string = '';
+  private isEditOper: boolean = false;
+  private newName: string;
 
   show(){
     this.isShow = !this.isShow;
@@ -67,13 +69,17 @@ export class BookComponent implements OnInit {
     this.operatorsPhone = this.dataService.showOperators(tel);
     this.phoneShow = tel.phone;
     if (this.searchRoom !== 'Все телефоны') {
-      this.roomShow = this.searchRoom
-    }
+      this.roomShow = this.searchRoom }
+  }
+
+  editShow(id: number) {
+    this.isEditOper = !this.isEditOper;
+     this.newName = this.operatorsPhone[id]
   }
 
   editOperator(id: number) {
-    console.log(id);
-    this.dataService.editOperator(this.phoneShow, id);
+    this.dataService.editOperator(this.phoneShow, id, this.newName);
+    this.isEditOper = !this.isEditOper;
   }
 
   addOperator() {

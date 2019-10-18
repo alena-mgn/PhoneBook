@@ -128,20 +128,32 @@
           <span> <strong>{{oper}}</strong> </span>
         </div>
         <div class="buttons">
-          <button class="btn btn-danger"
-                (click)="editOperator(i)">Редактировать</button>
+          <button *ngIf="searchRoom !=='Все телефоны'" class="btn btn-danger"
+                (click)="editShow(i)">Редактировать</button>
           <button  name="remOperator"
             (click)="removeOperator(oper)">Удалить</button>
         </div>
       </li>
     </ul>
 
+    <form *ngIf=isEditOper >
+      <hr>
+      <div class="form-group">
+        <span>Редактировать данные оператора:</span>
+        <input type="text" class="form-control"
+
+              [(ngModel)]="newName" name="newName" />
+        <button type="button" (click)="editOperator(i)">OK</button>
+      </div>
+      <hr>
+    </form>
+
     <ng-template #noOperators>
     <p>Операторов нет</p>
     </ng-template>
-
+      <hr>
       <div *ngIf="searchRoom !=='Все телефоны'" class="form-group">
-        <span>Оператор:</span>
+        <span>Добавить оператора:</span>
         <input class="form-control"
           type="text"
           placeholder="Введите данные..."
@@ -152,4 +164,5 @@
             [disabled] ="!addOper">
               Добавить</button>
       </div>
+      <hr>
 </section>
