@@ -1,5 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { Phone, DataService } from '../shared/data.service';
+import { DataService } from '../shared/data.service';
+import { Phone } from '../shared/phone';
+
 
 @Pipe({
   name: 'operatorsFilter'

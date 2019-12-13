@@ -1,20 +1,23 @@
 <div class="header">
-  <h1> <strong>Call Center</strong></h1>
+  <h1> <strong>Call - center</strong></h1>
 </div>
 <hr><hr>
 
 <section>
+  <div class="filter" *ngIf=isShow>
+    <header><h4>Поиск сотрудника</h4></header>
+  </div>
   <div class="form-group">
     <div *ngIf="!isShow"  class="form-group" >
       <button type="button"
             (click)="show()">Найти сотрудника</button>
     </div>
-
     <div class="filter" *ngIf=isShow >
       <input type="text" name="namePerson"
             class="form-control"
             [(ngModel)]="searchName"
-            placeholder="Введите данные..." />
+            placeholder="Введите фамилию..."
+            (click)="clikInput()"/>
       <div class="form-group">
         <button type="button"
         [disabled] ="!searchName"
@@ -24,28 +27,45 @@
         <button type="button" (click)="show()">Закрыть</button>
       </div>
     </div>
-
   </div>
 </section>
-<section>
-      <div class="filter" *ngIf="isOut && isShow" >
-        <header>
-          <h4>Данные сотрудника:
-            <span>{{searchName}}</span></h4>
-          <h4>Комната: <span>{{person.room}}</span></h4>
-          <h4>Рабочий телефон:<span>{{person.phone}}</span></h4>
-        </header>
-      </div>
-      <div *ngIf="!isOut && isShow">
-        <p>Такого сотрудника нет</p>
-      </div>
+
+<section *ngIf="isShow" >
+  <div class="filter">
+    <header>
+      <h4>Данные сотрудника: <span>{{searchName}}</span></h4>
+    </header>
+  </div>
+
+  <table *ngIf="isOut">
+    <thead>
+      <th>Ф.И.О.</th>
+      <th>Комната</th>
+      <th>Рабочий телефон</th>
+    </thead>
+    <tbody>
+      <tr *ngFor="let person of persons; let i = index" >
+        <td>{{i+1}}.  {{person.operators[0]}}</td>
+        <td>{{person.room}}</td>
+        <td>{{person.phone}}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="message" *ngIf="!isOut && isSearch ">
+      <p>Нет данных</p>
+  </div>
 </section>
 <hr><hr>
 
 <section>
   <div class="form-group">
     <span>Выберите помещение:</span>
-    <select class="form-control" name="box" [(ngModel)]="searchRoom">
+    <select
+        name="box"
+        [(ngModel)]="searchRoom"
+        (focus)="listRooms()">
+      <option selected>Все телефоны</option>
       <option *ngFor="let room of rooms; let i = index" [value]="room">
         {{room}}
       </option>
@@ -60,13 +80,12 @@
       <strong>Комната:<span>{{searchRoom}}</span></strong>
     <hr />
   </header>
-
-  <div class="filter">
+  <div class="filter" *ngIf="dataService.phones.length">
     <input type="text" placeholder="Поиск телефона..."
             [(ngModel)]="searchPhone"/>
   </div>
 
-    <ul class="form-group" *ngIf="dataService.phones.length; else noPhone" >
+    <ul class="form-group" >
       <li class="form-control" name="showPhone "
               *ngFor="let tel of dataService.phones | phonesFilter: searchRoom | telephoneFilter: searchPhone; let i=index">
         <div *ngIf="dataService.phones.length; else noPhone">
@@ -77,28 +96,35 @@
         <div class="buttons">
           <div class="form-control">
             <button type="button" name="showButton"
-              (click)="showOperators(tel)">
+              (click)="showOperators(tel)"
+              [disabled] = "tel.phone == 'Телефонов нет'">
               Показать операторов</button>
           </div>
           <button type="button" name="remPhone"
-              (click)="removePhone(tel.phone)">
+              title= "Для удаления номера удалите операторов"
+              (click)="removePhone(tel.phone)"
+              [disabled] = "tel.operators.length !==0 || tel.phone == 'Телефонов нет'">
               Удалить номер</button>
           </div>
       </li>
     </ul>
-    <hr/>
 
+    <hr/>
       <div *ngIf="searchRoom !=='Все телефоны'" class="form-group " >
-        <span>Телефон:</span>
+        <span>Телефон:</span><p>+7</p>
         <input class="form-control"
           type="text"
+          placeholder="Введите 10 цифр"
           [(ngModel)]="addTel"
-          (keydown.enter)="addPhone()"
-          name = "tlfn" #tlfn="ngModel" required pattern="[+7]+[0-9]{11}" />
+          name = "phone" #phone="ngModel" required pattern="[0-9]{10}"
+          (click)= "clean()"/>
         <button type="button"
               (click)= "addPhone()"
-              [disabled] ="tlfn.invalid">
+              [disabled] ="phone.invalid">
                 Добавить</button>
+      </div>
+      <div class="message">
+        <p *ngIf="!notPhone">Этот номер существует</p>
       </div>
   </section>
 
@@ -107,10 +133,10 @@
 </ng-template>
 <hr><hr>
 
-<section *ngIf=searchRoom >
+<section *ngIf="isOperators" >
   <header>
     <h4>Список операторов</h4>
-    <strong *ngIf="searchRoom !=='Все телефоны'" >Комната:<span>{{roomShow}}</span></strong>
+    <strong  >Комната:<span>{{roomShow}}</span></strong>
     <strong>Телефон: <span>{{phoneShow}}</span></strong>
     <hr />
   </header>
@@ -130,6 +156,8 @@
         <div class="buttons">
           <button *ngIf="searchRoom !=='Все телефоны'" class="btn btn-danger"
                 (click)="editShow(i)">Редактировать</button>
+          <button *ngIf="searchRoom !=='Все телефоны'" class="btn btn-danger"
+                (click)="changePhoneShow(i)">Изменить рабочий телефон</button>
           <button  name="remOperator"
             (click)="removeOperator(oper)">Удалить</button>
         </div>
@@ -141,28 +169,65 @@
       <div class="form-group">
         <span>Редактировать данные оператора:</span>
         <input type="text" class="form-control"
-
               [(ngModel)]="newName" name="newName" />
-        <button type="button" (click)="editOperator(i)">OK</button>
+        <button type="button" (click)="editOperator()">OK</button>
+        <button type="button" (click)="clean()">Отмена</button>
       </div>
+    </form>
+
+    <form *ngIf=isChangePhone >
       <hr>
+      <div class="form-group">
+        <span>Изменить рабочий телефон:</span>
+        <span><strong>{{Name}}</strong></span>
+
+        <select class="form-control"
+            [(ngModel)]="operRoom"
+            name="operRoom">
+          <option *ngFor="let room of rooms; let i = index" [value]="room">
+            {{room}}
+          </option>
+        </select>
+
+        <select class="form-control"
+            multiple="multiple"
+            [(ngModel)]="newPhone"
+            title = "Выберите номер"
+            name="newPhone">
+          <option disabled>Выберите новый номер</option>
+          <option *ngFor="let tel of dataService.phones | phonesFilter: operRoom; let i = index"
+                   [value]="tel">
+            {{tel.phone}}
+          </option>
+        </select>
+
+        <button type="button" (click)="changePhoneOperator(newPhone)">OK</button>
+        <button type="button" (click)="clean()">Отмена</button>
+      </div>
     </form>
 
     <ng-template #noOperators>
-    <p>Операторов нет</p>
+      <p>Операторов нет</p>
     </ng-template>
-      <hr>
-      <div *ngIf="searchRoom !=='Все телефоны'" class="form-group">
+    <hr>
+      <div *ngIf="searchRoom !=='Все телефоны' && !isEditOper && !isChangePhone" class="form-group">
         <span>Добавить оператора:</span>
         <input class="form-control"
           type="text"
           placeholder="Введите данные..."
           [(ngModel)]="addOper"
           (keydown.enter)="addOperator()" />
-        <button type="button"
-            (click)= "addOperator()"
-            [disabled] ="!addOper">
-              Добавить</button>
+
+        <button type="button" [disabled] ="!addOper"
+          (click)= "addOperator()">Добавить</button>
+
+        <button type="button" [disabled]="!addOper"
+          (click)="clean()">Отмена</button>
+
       </div>
-      <hr>
+
+      <div class="message">
+        <p *ngIf="!notOper">Такой сотрудник есть в штате <br> Уточните данные </p>
+      </div>
+
 </section>

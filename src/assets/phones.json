@@ -1,0 +1,78 @@
+{
+  "phoneList":
+  [{
+    "phoneRoom": "Box_1",
+    "phonePhone": "+7 8001000123",
+    "phoneOperators": [
+      "Абрамов К.Б.",
+      "Василенко А.Д.",
+      "Родимов В.Е."  ]
+  },{
+    "phoneRoom": "Box_1",
+    "phonePhone": "+7 8001000234",
+    "phoneOperators": [
+      "Родчикова Е.П.",
+      "Васина О.Р."  ]
+  },{
+    "phoneRoom": "Box_1",
+    "phonePhone": "+7 8001000345",
+    "phoneOperators": [
+      "Абрамович Р.К." ]
+  },{
+    "phoneRoom": "Box_2",
+    "phonePhone": "+7 8002000456",
+    "phoneOperators": [
+      "Разин Р.Т.",
+      "Давыдов Д.П."  ]
+  },{
+    "phoneRoom": "Box_3",
+    "phonePhone": "+7 8003000567",
+    "phoneOperators": [
+      "Иванова И.А.",
+      "Шигина Е.А.",
+      "Петров И.И."  ]
+  },{
+    "phoneRoom": "Box_3",
+    "phonePhone": "+7 8003000678",
+    "phoneOperators": [
+      "Калашников Т.М." ]
+  },{
+    "phoneRoom": "Box_4",
+    "phonePhone": "+7 8001221123",
+    "phoneOperators": [
+      "Федоров К.Б.",
+      "Денисова А.Д.",
+      "Ушаков В.Е."  ]
+  },{
+    "phoneRoom": "Box_4",
+    "phonePhone": "+7 8001001123",
+    "phoneOperators": [
+      "Петров К.Б.",
+      "Кузнецов А.Д.",
+      "Исаев В.Е."  ]
+  },{
+    "phoneRoom": "Box_2",
+    "phonePhone": "+7 8002078526",
+    "phoneOperators": [
+      "Разумовский Р.Т.",
+      "Швецов Л.П.",
+      "Иванова Л.А."  ]
+  },{
+    "phoneRoom": "Box_2",
+    "phonePhone": "+7 8002111456",
+    "phoneOperators": [
+      "Темин Д.Т.",
+      "Анин П.П.",
+      "Дымов П.П.",
+      "Шульгин А.Ж.",
+      "Цапов В.П." ]
+  },{
+    "phoneRoom": "Box_5",
+    "phonePhone": "+7 8002011123",
+    "phoneOperators": [
+      "Абрамов А.Б.",
+      "Василенко Б.Д.",
+      "Родимов Е.Е."  ]
+
+    }]
+}

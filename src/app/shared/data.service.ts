@@ -1,97 +1,127 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from '@angular/core'
 
-export class Phone {
-    constructor(public  room: string,
-                  public phone: string,
-                  public operators: string[]) {}
-}
+import { HttpService } from './http.service'
 
-@Injectable ({
-  providedIn: 'root'
-})
+import { Phone } from './phone';
+
+@Injectable ()
 
 export class DataService {
 
-      public phones: Phone[] = [
-        new Phone('Box_1', '+7 8001000123', ['Абрамов К.Б.', 'Василенко А.Д.','Родимов В.Е.']),
-        new Phone('Box_1', '+7 8001000234', ['Родчикова Е.П.', 'Васина О.Р.']),
-        new Phone('Box_1', '+7 8001000345', ['Абрамович Р.К.']),
-        new Phone('Box_2', '+7 8002000456', ['Разин Р.Т.', 'Давыдов Д.П.']),
-        new Phone('Box_3', '+7 8003000567', ['Иванова И.А.', 'Шигина Е.А.','Петров И.И.']),
-        new Phone('Box_3', '+7 8003000678', ['Калашников Т.М.']),
-        new Phone('Box_4', '+7 8001001123', ['Петров К.Б.', 'Кузнецов А.Д.','Исаев В.Е.']),
-        new Phone('Box_4', '+7 8001221123', ['Федоров К.Б.', 'Денисова А.Д.','Ушаков В.Е.']),
-        new Phone('Box_2', '+7 8002078526', ['Разумовский Р.Т.', 'Швецов Л.П.']),
-        new Phone('Box_2', '+7 8002111456', ['Темин Д.Т.', 'Анин П.П.', 'Дымов П.П.','Шульгин А.Ж.','Цапов В.П.'])
+    constructor(private httpService: HttpService){}
 
-    ];
+    public phones: Phone[] = []
 
-     public listRooms(){
-      let arr: string[] = ['Все телефоны'];
-      for (let i = 0; i < this.phones.length; i++) {
-        let r: string = this.phones[i].room;
-        if (arr.indexOf(r) == -1 ) {
-            arr.push(r);
+    dataInit() {
+      this.httpService.getPhones().subscribe(data => this.phones = data)
+    }
+
+    listRooms() {
+      let arr: string[] = []
+        for (let i = 0; i < this.phones.length; i++) {
+          let r: string = this.phones[i].room
+          if (arr.indexOf(r) == -1 )   arr.push(r)
         }
-      }
-      return arr;
-    } ;
+      arr.sort()
+      return arr
+    }
 
     search(searchName: string) {
-      let user: Phone = new Phone('', '', []);
+      let users: Phone[] = []
+      searchName = searchName.trim().toLowerCase() + ' '
         for (let i = 0; i < this.phones.length; i++) {
             for (let j = 0; j < this.phones[i].operators.length; j++) {
-                if (this.phones[i].operators[j] == searchName) {
-                      user = this.phones[i];
+              let oper = this.phones[i].operators[j].trim().toLowerCase() + ' '
+              if ( oper.includes(searchName) ) {
+                  let user: Phone = new Phone('', '', [])
+                      user.phone = this.phones[i].phone
+                      user.room = this.phones[i].room
+                      user.operators = [this.phones[i].operators[j]]
+                    users.push(user)
                 }
-            };
-        };
-      return user;
+            }
+        }
+      return users
+    }
 
-    };
+    indexPhone(tel: string) {
+     let telId: number = -1
+       for (let i = 0; i < this.phones.length; i++)
+           if (this.phones[i].phone == tel)  telId = i
+     return telId
+    }
 
     addPhone(telefon: Phone) {
-       this.phones.push(telefon);
+      let noPhone:boolean = this.indexPhone(telefon.phone) == -1
+       if (noPhone) this.phones.unshift(telefon)
+      let tel =  'Телефонов нет'
+        for (let i = 0; i < this.phones.length; i++) {
+          if ((this.phones[i].phone == tel) && (this.phones[i].room == telefon.room)) {
+            this.phones.splice(i, 1)
+          }
+        }
+      return noPhone
+    }
+
+    countPhoneRoom(roomPhone: string) {
+      let count = 0
+        for (let i = 0; i < this.phones.length; i++)
+            if (this.phones[i].room == roomPhone) count++
+      return count
     }
 
     removePhone(tel: string){
-      this.phones = this.phones.filter(t => t.phone !== tel)
+      let idx: number = this.indexPhone(tel)
+      let phoneRoom = this.phones[idx].room
+      let roomNotPhone: boolean = this.countPhoneRoom(phoneRoom) == 1
+        if (roomNotPhone) {
+          let user: Phone = new Phone('', '', [])
+              user.room = phoneRoom
+              user.phone = 'Телефонов нет'
+            this.phones.push(user)
+        }
+        this.phones = this.phones.filter(t => t.phone !== tel)
     }
 
-    showOperators(tel: Phone) {
-      return tel.operators;
-      }
+     findOperator(operator: string) {
+      let flag = false
+      let searchName = operator.trim().toLowerCase() + ' '
+        for (let i = 0; i < this.phones.length; i++) {
+            for (let j = 0; j < this.phones[i].operators.length; j++) {
+              let oper = this.phones[i].operators[j].trim().toLowerCase() + ' '
+              if ( oper.includes(searchName) ) flag = true
+            }
+        }
+      return flag
+    }
 
     addOperator(phoneShow: string, addOper: string){
-      let idx: number;
-      for (let i = 0; i < this.phones.length; i++) {
-          if (this.phones[i].phone == phoneShow) {
-                idx = i;
-          };
-      };
-      this.phones[idx].operators.push(addOper);
+      let notOper = !this.findOperator(addOper)
+        if (notOper) {
+          let idx: number = this.indexPhone(phoneShow)
+          this.phones[idx].operators.push(addOper)
+        }
+      return notOper
     }
 
-    editOperator(phoneShow: string, id: number, newName: string) {
-      let idx: number;
-      for (let i = 0; i < this.phones.length; i++) {
-          if (this.phones[i].phone == phoneShow) {
-                idx = i; };
-      };
-      //let newName: string = 'OPERATOR'
-      //prompt("Введите новые данные");
-      this.phones[idx].operators.splice(id,1, newName);
+    editOperator(phoneShow: string, oldName: string, newName: string) {
+      let idx: number = this.indexPhone(phoneShow)
+      let id: number = this.phones[idx].operators.indexOf(oldName)
+        this.phones[idx].operators.splice(id,1, newName)
+      return this.phones[idx].operators
     }
 
     removeOperator(phoneShow: string, oper: string) {
-        let idx: number;
-        for (let i = 0; i < this.phones.length; i++) {
-            if (this.phones[i].phone == phoneShow) {
-                  idx = i;
-            };
-        };
-        this.phones[idx].operators = this.phones[idx].operators.filter(op => op !== oper);
+        let idx: number = this.indexPhone(phoneShow)
+          this.phones[idx].operators = this.phones[idx].operators.filter(op => op !== oper)
+        return this.phones[idx].operators
     }
 
+    changePhoneOperator(nameOper:string, phoneShow:string, newTel:string) {
+      let idx: number = this.indexPhone(newTel)
+        this.phones[idx].operators.push(nameOper)
+        this.removeOperator(phoneShow, nameOper)
+      return this.phones[idx].operators
+    }
 
 }
